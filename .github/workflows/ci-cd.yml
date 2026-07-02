@@ -26,33 +26,29 @@ jobs:
           python -m pip install --upgrade pip
           pip install flake8 pytest
           if [ -f services/worker/requirements.txt ]; then pip install -r services/worker/requirements.txt; fi
-
       - name: Lint Worker Code with flake8
         run: |
           # Stop the build if there are Python syntax errors or undefined names
           flake8 services/worker --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings.
           flake8 services/worker --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
       # Node.js API Gateway Linting
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
-          cache-dependency-path: services/gateway/package-lock.json
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Install Gateway Dependencies
         run: |
           cd services/gateway
           # npm ci or npm install depending on presence of lock file
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
-
       - name: Audit Gateway Dependencies for Security
         run: |
           cd services/gateway
           npm audit --audit-level=high || true
-
   build-and-scan:
     name: Container Build & Vulnerability Scan
     needs: lint-and-test
@@ -89,7 +85,7 @@ jobs:
 
       # Trivy Security Scanning for vulnerabilities
       - name: Run Trivy Vulnerability Scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: '${{ matrix.image_name }}:${{ github.sha }}'
           format: 'table'
