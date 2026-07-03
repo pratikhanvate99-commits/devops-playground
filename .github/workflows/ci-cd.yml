@@ -38,7 +38,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+          cache-dependency-path: 'services/gateway/package-lock.json'
 
       - name: Install Gateway Dependencies
         run: |
