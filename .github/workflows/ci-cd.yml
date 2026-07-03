@@ -33,12 +33,11 @@ jobs:
           # exit-zero treats all errors as warnings.
           flake8 services/worker --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       # Node.js API Gateway Linting
-      - name: Set up Node.js
+            - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: 'services/gateway/package-lock.json'
 
       - name: Install Gateway Dependencies
         run: |
